@@ -348,7 +348,7 @@ probably greatly enhance performance.
 .. _`IMB-EXT_intranode.txt` : ./data/IMB-EXT_intranode.txt
 .. _`IMB-EXT_internode.txt`: ./data/IMB-EXT_internode.txt
 .. _`IMB-EXT_internode_Socket.txt`: ./data/IMB-EXT_internode_Socket.txt
-.. _`mpi_latency.c`: ./code/mpi_latency.c
+.. _`mpi_latency.c`: ./mpi_latency.c
 .. _`latency_intranode.txt`: ./data/latency_intranode.txt
 .. _`latency_internode.txt`: ./data/latency_internode.txt
 .. _`latency_internode_Sockets.txt`: ./data/latency_internode_Sockets.txt
