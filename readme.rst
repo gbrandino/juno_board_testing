@@ -444,17 +444,330 @@ gives
 This means that the ``tcp`` stack is wasting a lot of time. A native transport layer, or maybe ``openib`` (OpenFabrics) compliant layer, will
 probably greatly enhance performance.  
 
+===================================
+OpenMPI 1.10.3 (compiled on juno)
+===================================
 
-.. _`IMB-MPI1_intranode.txt` : ./data/IMB-MPI1_intranode.txt
-.. _`IMB-MPI1_internode.txt` : ./data/IMB-MPI1_internode.txt
-.. _`IMB-MPI1_internode_Socket.txt` : ./data/IMB-MPI1_internode_Socket.txt
-.. _`IMB-EXT_intranode.txt` : ./data/IMB-EXT_intranode.txt
-.. _`IMB-EXT_internode.txt`: ./data/IMB-EXT_internode.txt
-.. _`IMB-EXT_internode_Socket.txt`: ./data/IMB-EXT_internode_Socket.txt
-.. _`mpi_latency.c`: ./code/mpi_latency.c
-.. _`latency_intranode.txt`: ./data/latency_intranode.txt
-.. _`latency_internode.txt`: ./data/latency_internode.txt
-.. _`latency_internode_Sockets.txt`: ./data/latency_internode_Sockets.txt
+We compiled OpenMPI 1.10.3 on the juno board. As specified in ``openmpi_compilation.rst_``, apparently OpenMPI 2.0.0 cannot be compiled with the gcc version
+( 4.9 ) available on juno.
+
+The use of unimem ``libc`` and ``libpthread`` as been enforced in this compilation. 
+
+Using version 1.10.3 brings quite some benefits, expecially for intranode communication, thanks to the fast ``vader`` ``btl``
+
+intranode cortex A72 socket
+===========================
+Using ``sm``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,sm  -np 2 taskset -c 1,2 /home/exactlab/imb_ompu_1.10/src/IMB-MPI1 PingPong
+
+  # PingPong
+
+  #---------------------------------------------------  
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         1.19         0.00
+            1         1000         1.48         0.64
+            2         1000         1.39         1.37
+            4         1000         1.40         2.72
+            8         1000         1.46         5.24
+           16         1000         1.40        10.91
+           32         1000         1.51        20.26
+           64         1000         1.49        40.94
+          128         1000         1.52        80.44
+          256         1000         1.64       148.50
+          512         1000         2.09       234.07
+         1024         1000         3.11       313.81
+         2048         1000         3.39       576.58
+         4096         1000         5.68       687.65
+         8192         1000         8.37       933.95
+        16384         1000        13.49      1158.26
+        32768         1000        25.07      1246.48
+        65536          640        39.39      1586.74
+       131072          320        66.45      1881.16
+       262144          160       119.91      2084.85
+       524288           80       231.06      2163.92
+      1048576           40       563.79      1773.72
+      2097152           20       981.13      2038.47
+      4194304           10      1347.10      2969.34
+
+
+
+Using ``vader``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,vader  -np 2 taskset -c 1,2 ./IMB-MPI1 PingPong
+
+
+  #---------------------------------------------------
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         0.88         0.00
+            1         1000         1.07         0.89
+            2         1000         1.03         1.84
+            4         1000         1.07         3.55
+            8         1000         1.03         7.41
+           16         1000         1.09        14.03
+           32         1000         1.08        28.15
+           64         1000         1.19        51.47
+          128         1000         1.27        96.16
+          256         1000         1.42       172.23
+          512         1000         1.77       276.10
+         1024         1000         2.86       341.46
+         2048         1000         3.65       535.02
+         4096         1000         5.99       652.52
+         8192         1000         8.63       905.17
+        16384         1000        14.07      1110.91
+        32768         1000        25.05      1247.63
+        65536          640        40.63      1538.14
+       131072          320        68.32      1829.66
+       262144          160       123.94      2017.05
+       524288           80       246.32      2029.90
+      1048576           40       599.56      1667.88
+      2097152           20      1251.65      1597.89
+      4194304           10      2483.75      1610.47
+
+intranode cortex A53 socket
+===========================
+Using ``sm``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,sm  -np 2 taskset -c 0,3 /home/exactlab/imb_ompu_1.10/src/IMB-MPI1 PingPong
+
+  # PingPong
+
+  #---------------------------------------------------  
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         2.48         0.00
+            1         1000         3.10         0.31
+            2         1000         3.06         0.62
+            4         1000         3.08         1.24
+            8         1000         3.09         2.47
+           16         1000         3.07         4.97
+           32         1000         3.08         9.92
+           64         1000         3.16        19.30
+          128         1000         3.29        37.11
+          256         1000         3.49        70.01
+          512         1000         4.09       119.47
+         1024         1000         4.87       200.71
+         2048         1000         6.22       314.16
+         4096         1000        11.97       326.30
+         8192         1000        15.53       503.04
+        16384         1000        24.64       634.02
+        32768         1000        41.78       747.98
+        65536          640        62.36      1002.31
+       131072          320        66.64      1875.73
+       262144          160       127.57      1959.63
+       524288           80       296.47      1686.48
+      1048576           40       636.76      1570.44
+      2097152           20      1257.15      1590.90
+      4194304           10      2479.45      1613.26
+
+
+
+
+Using ``vader``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,vader  -np 2 taskset -c 0,3 ./IMB-MPI1 PingPong
+
+
+  #---------------------------------------------------
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         2.40         0.00
+            1         1000         2.88         0.33
+            2         1000         2.89         0.66
+            4         1000         2.84         1.34
+            8         1000         2.86         2.67
+           16         1000         2.99         5.10
+           32         1000         3.05        10.02
+           64         1000         2.91        21.00
+          128         1000         3.02        40.45
+          256         1000         3.29        74.13
+          512         1000         3.81       128.24
+         1024         1000         5.14       189.96
+         2048         1000         6.56       297.80
+         4096         1000        11.70       334.00
+         8192         1000        16.18       482.71
+        16384         1000        25.10       622.57
+        32768         1000        42.08       742.62
+        65536          640        67.39       927.50
+       131072          320       116.18      1075.93
+       262144          160       219.66      1138.11
+       524288           80       426.16      1173.28
+      1048576           40       603.10      1658.10
+      2097152           20      1198.20      1669.17
+      4194304           10      2375.01      1684.21
+
+
+
+intranode intersocket
+===========================
+Using ``sm``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,sm  -np 2 taskset -c 0,1 /home/exactlab/imb_ompu_1.10/src/IMB-MPI1 PingPong
+
+  # PingPong
+
+  #---------------------------------------------------  
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         2.26         0.00
+            1         1000         2.64         0.36
+            2         1000         2.62         0.73
+            4         1000         2.65         1.44
+            8         1000         2.56         2.98
+           16         1000         2.58         5.91
+           32         1000         2.84        10.73
+           64         1000         2.88        21.17
+          128         1000         3.08        39.64
+          256         1000         3.22        75.84
+          512         1000         3.73       130.85
+         1024         1000         4.48       217.89
+         2048         1000         6.02       324.47
+         4096         1000        11.38       343.33
+         8192         1000        14.19       550.55
+        16384         1000        20.97       745.24
+        32768         1000        35.72       874.74
+        65536          640        57.44      1088.09
+       131072          320       100.53      1243.45
+       262144          160       120.97      2066.69
+       524288           80       255.53      1956.71
+      1048576           40       653.74      1529.67
+      2097152           20      1437.40      1391.41
+      4194304           10      2924.75      1367.64
+
+
+Using ``vader``
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun -mca btl self,vader  -np 2 taskset -c 1,2 ./IMB-MPI1 PingPong
+
+
+  #---------------------------------------------------
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         1.68         0.00
+            1         1000         2.08         0.46
+            2         1000         2.10         0.91
+            4         1000         2.04         1.87
+            8         1000         2.05         3.73
+           16         1000         2.18         6.99
+           32         1000         2.21        13.82
+           64         1000         2.29        26.64
+          128         1000         2.45        49.92
+          256         1000         2.70        90.27
+          512         1000         3.31       147.63
+         1024         1000         5.34       182.84
+         2048         1000         6.86       284.61
+         4096         1000        12.30       317.61
+         8192         1000        15.59       501.06
+        16384         1000        22.34       699.45
+        32768         1000        37.82       826.24
+        65536          640        59.91      1043.16
+       131072          320        75.04      1665.84
+       262144          160       124.41      2009.45
+       524288           80       261.05      1915.35
+      1048576           40       643.58      1553.82
+      2097152           20      1465.80      1364.45
+      4194304           10      2996.40      1334.94
+
+internode
+===========
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun  -host junoC,junoD  -np 2 /home/exactlab/imb_ompu_1.10/src/IMB-MPI1 PingPong
+
+  # PingPong
+
+  #---------------------------------------------------
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000       158.09         0.00
+            1         1000       151.85         0.01
+            2         1000       151.22         0.01
+            4         1000       151.28         0.03
+            8         1000       150.96         0.05
+           16         1000       151.17         0.10
+           32         1000       151.55         0.20
+           64         1000       153.29         0.40
+          128         1000       154.50         0.79
+          256         1000       157.57         1.55
+          512         1000       165.05         2.96
+         1024         1000       178.75         5.46
+         2048         1000       173.64        11.25
+         4096         1000       187.02        20.89
+         8192         1000       252.48        30.94
+        16384         1000       296.24        52.75
+        32768         1000       464.87        67.22
+        65536          640      1050.25        59.51
+       131072          320      1633.22        76.54
+       262144          160      2820.34        88.64
+       524288           80      5192.70        96.29
+      1048576           40      9951.44       100.49
+      2097152           20     19401.35       103.09
+      4194304           10     38235.20       104.62
+
+internode using sockets over RDMA
+==================================
+::
+
+  /home/exactlab/openmpi-1.10.3._local/bin/mpirun --mca plm_rsh_agent "ssh -p 50000" -host junoC,junoD  -np 2 /home/exactlab/imb_ompu_1.10/src/IMB-MPI1 PingPong
+
+OpenMPI 1.10.3 deprecates ``orte_rsh_agent`` in favor of ``plm_rsh_agent``
+::
+
+  # PingPong
+
+  #---------------------------------------------------
+  # Benchmarking PingPong 
+  # #processes = 2 
+  #---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000       177.35         0.00
+            1         1000       169.20         0.01
+            2         1000       166.14         0.01
+            4         1000       165.36         0.02
+            8         1000       165.43         0.05
+           16         1000       165.57         0.09
+           32         1000       165.92         0.18
+           64         1000       167.31         0.36
+          128         1000       169.09         0.72
+          256         1000       172.65         1.41
+          512         1000       180.21         2.71
+         1024         1000       193.99         5.03
+         2048         1000       173.10        11.28
+         4096         1000       182.98        21.35
+         8192         1000       216.56        36.08
+        16384         1000       344.96        45.29
+        32768         1000       503.05        62.12
+        65536          640      1178.26        53.04
+       131072          320      1623.41        77.00
+       262144          160      2789.34        89.63
+       524288           80      5097.77        98.08
+      1048576           40      9681.44       103.29
+      2097152           20     18769.40       106.56
+      4194304           10     37025.31       108.03
+
+
 
 ===========================
 Reference INTEL + Mellanox
@@ -503,8 +816,6 @@ intranode - intrasocket
       4194304           10       550.15      7270.73
 
 
-  # All processes entering MPI_Finalize
-
 ``mpi_latency.x`` gives
 ::
 
@@ -551,7 +862,6 @@ intranode - intersocket
       4194304           10       755.49      5294.58
 
 
-  # All processes entering MPI_Finalize
 
 ``mpi_latency.x`` gives
 ::
@@ -599,10 +909,22 @@ internode
       4194304           10      1383.76      2890.68
 
 
-  # All processes entering MPI_Finalize
-
 ``mpi_latency.x`` gives
 ::
 
   *** Avg round trip time = 3 microseconds
   *** Avg one way latency = 1 microseconds
+
+
+
+.. _`IMB-MPI1_intranode.txt` : ./data/IMB-MPI1_intranode.txt
+.. _`IMB-MPI1_internode.txt` : ./data/IMB-MPI1_internode.txt
+.. _`IMB-MPI1_internode_Socket.txt` : ./data/IMB-MPI1_internode_Socket.txt
+.. _`IMB-EXT_intranode.txt` : ./data/IMB-EXT_intranode.txt
+.. _`IMB-EXT_internode.txt`: ./data/IMB-EXT_internode.txt
+.. _`IMB-EXT_internode_Socket.txt`: ./data/IMB-EXT_internode_Socket.txt
+.. _`mpi_latency.c`: ./code/mpi_latency.c
+.. _`latency_intranode.txt`: ./data/latency_intranode.txt
+.. _`latency_internode.txt`: ./data/latency_internode.txt
+.. _`latency_internode_Sockets.txt`: ./data/latency_internode_Sockets.txt
+.. _`openmpi_compilation.rst` : ./openmpi_compilation.rst
