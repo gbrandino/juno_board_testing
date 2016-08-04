@@ -4,7 +4,7 @@ OpenMPI 2.0.0 compilation on juno board
 
 Download OpenMPI 2.0.0.
 
-After unpacking, us ``LDFLAGS`` to force the compilation to link the unimem modified ``libc`` and ``libpthread``. Set also a prefix to a local 
+After unpacking, use ``LDFLAGS`` to force the compilation to link the unimem modified ``libc`` and ``libpthread``. Set also a prefix to a local 
 folder
 ::
 
@@ -31,7 +31,7 @@ Linaro distribution seems however to support only ( for now ) gcc 4.9
 OpenMPI 1.10.3 compilation on juno board
 ========================================
 
-After unpacking, us ``LDFLAGS`` to force the compilation to link the unimem modified ``libc`` and ``libpthread``. Set also a prefix to a local 
+After unpacking, use ``LDFLAGS`` to force the compilation to link the unimem modified ``libc`` and ``libpthread``. Set also a prefix to a local 
 folder
 ::
 
