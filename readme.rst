@@ -78,7 +78,7 @@ The test are seraparete in
 
 - intranode --> communication between cores on the same board
 - internode --> communication betwenn cores on different boards
-- internode_SOckets --> communication betwenn cores on different boards, using the unimem libraries intercept
+- internode_Sockets --> communication betwenn cores on different boards, using the unimem libraries intercept
 
 Here is the list of file ( locate in the ``data`` subfolder )
 
@@ -118,7 +118,7 @@ Reference Intel CPU + Mellanox Infiniband
   depending on process binding
 
 
-- internode ( both with and without sockets over RDMA)
+- internode 
     - single trip latency: ~1 us
     - bandwith: ~100 MB/s
  
