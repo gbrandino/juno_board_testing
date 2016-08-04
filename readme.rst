@@ -120,7 +120,7 @@ Reference Intel CPU + Mellanox Infiniband
 
 - internode 
     - single trip latency: ~1 us
-    - bandwith: ~100 MB/s
+    - bandwith: ~2900 MB/s
  
 
 
